@@ -1,0 +1,10 @@
+run_name: vit_scratch_1pct
+variant: ViT-Base/16
+label_fraction: 0.01
+seed: 0
+epochs: 15
+batch_size: 64
+base_lr: 0.0001
+weight_decay: 0.1
+dropout: 0.1
+warmup_fraction: 0.1

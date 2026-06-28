@@ -1,0 +1,31 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# STL-10 dataset (binary files + archive)
+data/stl10_binary/
+data/stl10_binary.tar.gz
+
+# Model checkpoints & large weight files
+*.pt
+*.pth
+*.h5
+*.pkl
+*.ckpt
+*.safetensors
+*.bin
+
+# Runs (tensorboard logs, wandb, etc.) — plots are kept
+results/runs/
+
+# Legacy datasets folder
+/datasets/
