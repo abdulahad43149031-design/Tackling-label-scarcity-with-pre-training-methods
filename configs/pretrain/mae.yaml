@@ -1,0 +1,21 @@
+## MAE pretraining config — STL-10 100K unlabeled
+## Overrides DEFAULT_CFG in train_mae.py
+
+variant:        "ViT-Small/16"
+img_size:       96
+patch_size:     16
+mask_ratio:     0.75
+epochs:         200
+batch_size:     128
+base_lr:        1.5e-4          # effective LR = base_lr * batch_size / 256
+weight_decay:   0.05
+warmup_epochs:  20
+decoder_dim:    256
+decoder_depth:  4
+decoder_heads:  8
+norm_pix_loss:  true
+clip_grad:      3.0
+num_workers:    4
+data_root:      "./data"
+ckpt_dir:       "results/checkpoints"
+seed:           42

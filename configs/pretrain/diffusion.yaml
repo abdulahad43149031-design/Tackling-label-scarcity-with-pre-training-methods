@@ -1,0 +1,17 @@
+## Diffusion feature extraction config
+## Controls sweep + caching in extract_features.py
+
+model_id:             "google/ddpm-cifar10-32"
+model_img_size:       32                              # resize STL-10 images to this
+
+## Hyperparameter sweep (timestep × hook_layer)
+timesteps_to_sweep:   [100, 250, 500]
+hook_layers_to_sweep: ["mid_block", "down_blocks.2"]
+
+## Used if --skip_sweep flag is passed (lock in after sweep)
+timestep:             250
+hook_layer:           "mid_block"
+
+data_root:            "./data"
+ckpt_dir:             "results/checkpoints"
+embedding_cache_dir:  "results/checkpoints/diffusion_embeddings"

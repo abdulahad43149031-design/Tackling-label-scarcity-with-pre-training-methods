@@ -10,6 +10,10 @@ dependencies = [
     "scikit-learn>=1.9.0",
     "torch>=2.7.0",
     "torchvision>=0.22.0",
+    "diffusers>=0.27.0",
+    "transformers>=4.40.0",
+    "accelerate>=0.30.0",
+    "tqdm>=4.66.0",
 ]
 
 [[tool.uv.index]]

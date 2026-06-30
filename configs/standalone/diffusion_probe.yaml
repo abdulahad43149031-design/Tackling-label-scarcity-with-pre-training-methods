@@ -1,0 +1,17 @@
+# Diffusion linear probe — STL-10
+# Encoder: frozen pretrained diffusion U-Net, intermediate block activation → pooled embedding.
+# No pretraining needed — uses a pretrained checkpoint (e.g. CompVis/ldm-celebahq-256).
+# Timestep and hooked layer are hyperparameters swept before locking in.
+
+encoder:          "diffusion"
+encoder_ckpt:     null             # pretrained hub model; no local ckpt needed
+diffusion_model:  "google/ddpm-cifar10-32"   # placeholder — to be decided after sweep
+timestep:         250              # noise timestep to inject; sweep [100, 250, 500]
+hook_layer:       "mid_block"      # U-Net block to hook; sweep ["mid_block", "down_2", "up_1"]
+label_fraction:   0.01             # change to 0.05 | 0.10 | 1.0 per run
+seed:             0                # change to 1 | 2 per run
+epochs:           30
+batch_size:       64
+base_lr:          0.001
+weight_decay:     0.0
+smoothing_window: 10

@@ -1,0 +1,27 @@
+## DINO pretraining config — STL-10 100K unlabeled
+## Overrides DEFAULT_CFG in train_dino.py
+
+variant:                    "ViT-Small/16"
+img_size:                   96
+patch_size:                 16
+epochs:                     100
+batch_size:                 64
+base_lr:                    5.0e-4
+min_lr:                     1.0e-6
+weight_decay:               0.04
+weight_decay_end:           0.4
+teacher_momentum_start:     0.996
+out_dim:                    4096
+hidden_dim:                 2048
+bottleneck_dim:             256
+n_local_crops:              6         # total crops = 8 (2 global + 6 local)
+student_temp:               0.1
+warmup_teacher_temp:        0.04
+teacher_temp:               0.07
+warmup_teacher_temp_epochs: 30
+freeze_last_layer_epochs:   1
+clip_grad:                  3.0
+num_workers:                4
+data_root:                  "./data"
+ckpt_dir:                   "results/checkpoints"
+seed:                       42

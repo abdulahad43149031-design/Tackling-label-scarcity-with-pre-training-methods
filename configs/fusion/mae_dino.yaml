@@ -1,0 +1,21 @@
+# MAE + DINO duo fusion — STL-10
+# Both encoders frozen. Only the EmbeddingFusion module + linear head train.
+
+encoders:
+  - name: "mae"
+    ckpt: "results/checkpoints/mae_encoder.pt"
+    variant: "ViT-Small/16"
+  - name: "dino"
+    ckpt: "results/checkpoints/dino_encoder.pt"
+    variant: "ViT-Small/16"
+
+fusion_mode:      "concat_proj"    # primary; fallback: "cross_attn"
+fused_dim:        256              # output dim of the fusion projection
+
+label_fraction:   0.01             # change to 0.05 | 0.10 | 1.0 per run
+seed:             0                # change to 1 | 2 per run
+epochs:           30
+batch_size:       64
+base_lr:          0.001
+weight_decay:     0.0
+smoothing_window: 10

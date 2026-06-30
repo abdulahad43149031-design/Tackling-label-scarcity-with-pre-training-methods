@@ -1,0 +1,5 @@
+1. train_baseline.py          ← no dependencies
+2. train_mae.py               ← no dependencies (can run parallel with 1)
+3. train_dino.py              ← no dependencies (can run parallel with 1, 2)
+4. extract_features.py        ← no dependencies (can run parallel with 1, 2, 3)
+5. train_downstream.py        ← needs outputs from 2, 3, 4
