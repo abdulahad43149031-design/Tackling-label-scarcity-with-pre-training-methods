@@ -2,4 +2,5 @@
 2. train_mae.py               ← no dependencies (can run parallel with 1) (pre-train)
 3. train_dino.py              ← no dependencies (can run parallel with 1, 2) (pre-train)
 4. extract_features.py        ← no dependencies (can run parallel with 1, 2, 3) (feature-extract)
-5. train_downstream.py        ← needs outputs from 2, 3, 4
+5. train_downstream.py        ← needs outputs from 2, 3, 
+4

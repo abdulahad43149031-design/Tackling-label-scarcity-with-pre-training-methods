@@ -1,6 +1,11 @@
 """
 DINO pretraining on STL-10's 100K unlabeled images — Phase 1b.
 
+Resumable training: trains for `resume_interval` epochs per run (default 20),
+saves a full resume checkpoint, and stops. Next run auto-detects and resumes
+from where it left off. When all `epochs` are complete, intermediate/resume
+checkpoints are deleted — only the final dino_encoder.pt is kept.
+
 Training protocol:
   - Student: ViT-Small/16 (trainable)
   - Teacher: EMA copy of student (no gradient); momentum starts at 0.996 → 1.0 (cosine)
@@ -11,11 +16,13 @@ Training protocol:
   - Output: results/checkpoints/dino_encoder.pt (student encoder weights only)
 
 Usage:
-  uv run python train_dino.py
+  uv run python train_dino.py                                    # trains epochs 1-20, stops
+  uv run python train_dino.py                                    # resumes epochs 21-40, stops
+  uv run python train_dino.py                                    # ... until 100 epochs done
   uv run python train_dino.py --config configs/pretrain/dino.yaml
 """
 
-import os, argparse, json, copy, yaml
+import os, argparse, json, copy, yaml, glob
 import torch
 import torch.nn as nn
 from torch.optim import AdamW
@@ -28,11 +35,75 @@ from encoders.dino import (
 from data.stl10_data import get_dino_unlabeled_loader
 
 
+# ──────────────────────────── resume helpers ─────────────────────────────────
+
+RESUME_CKPT_NAME = "dino_resume.pt"
+
+
+def _save_resume_checkpoint(
+    path: str,
+    epoch: int,
+    global_step: int,
+    best_loss: float,
+    history: list,
+    student, teacher, student_head, teacher_head,
+    optimizer, criterion,
+):
+    """Save everything needed to resume training exactly where we left off."""
+    torch.save({
+        "epoch":              epoch,
+        "global_step":        global_step,
+        "best_loss":          best_loss,
+        "history":            history,
+        "student":            student.state_dict(),
+        "teacher":            teacher.state_dict(),
+        "student_head":       student_head.state_dict(),
+        "teacher_head":       teacher_head.state_dict(),
+        "optimizer":          optimizer.state_dict(),
+        "criterion_center":   criterion.center.clone(),
+    }, path)
+
+
+def _load_resume_checkpoint(
+    path: str,
+    device: str,
+    student, teacher, student_head, teacher_head,
+    optimizer, criterion,
+) -> tuple:
+    """Load resume checkpoint and return (start_epoch, global_step, best_loss, history)."""
+    ckpt = torch.load(path, map_location=device, weights_only=False)
+    student.load_state_dict(ckpt["student"])
+    teacher.load_state_dict(ckpt["teacher"])
+    student_head.load_state_dict(ckpt["student_head"])
+    teacher_head.load_state_dict(ckpt["teacher_head"])
+    optimizer.load_state_dict(ckpt["optimizer"])
+    criterion.center.copy_(ckpt["criterion_center"])
+    return (
+        ckpt["epoch"],        # last completed epoch (0-indexed)
+        ckpt["global_step"],
+        ckpt["best_loss"],
+        ckpt["history"],
+    )
+
+
+def _cleanup_intermediate_checkpoints(ckpt_dir: str):
+    """Delete resume and best-loss checkpoints, keeping only the final encoder."""
+    for fname in [RESUME_CKPT_NAME, "dino_encoder_best.pt"]:
+        fpath = os.path.join(ckpt_dir, fname)
+        if os.path.exists(fpath):
+            os.remove(fpath)
+            print(f"[DINO] Deleted intermediate checkpoint: {fname}")
+
+
 # ──────────────────────────────── training ───────────────────────────────────
 
 def train(cfg: dict):
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"[DINO] device={device}  variant={cfg['variant']}  epochs={cfg['epochs']}")
+    n_epochs = cfg["epochs"]
+    resume_interval = cfg.get("resume_interval", 20)
+
+    print(f"[DINO] device={device}  variant={cfg['variant']}  "
+          f"total_epochs={n_epochs}  resume_interval={resume_interval}")
 
     torch.manual_seed(cfg.get("seed", 42))
 
@@ -77,7 +148,6 @@ def train(cfg: dict):
         p.requires_grad = False
 
     # Loss
-    n_epochs = cfg["epochs"]
     criterion = DINOLoss(
         out_dim=out_dim,
         n_crops=n_crops,
@@ -95,7 +165,8 @@ def train(cfg: dict):
     ]
     optimizer = AdamW(params_groups, weight_decay=cfg.get("weight_decay", 0.04))
 
-    # LR and WD schedules (cosine)
+    # LR and WD schedules (cosine) — computed over ALL epochs so schedule is
+    # consistent regardless of which chunk we're in
     total_steps = n_steps * n_epochs
     lr_schedule = cosine_scheduler(
         base=cfg["base_lr"], end=cfg.get("min_lr", 1e-6),
@@ -116,11 +187,37 @@ def train(cfg: dict):
     ckpt_dir  = cfg.get("ckpt_dir", "results/checkpoints")
     os.makedirs(ckpt_dir, exist_ok=True)
 
-    history   = []
-    best_loss = float("inf")
+    # ── Resume from checkpoint if one exists ─────────────────────────────────
+    resume_path = os.path.join(ckpt_dir, RESUME_CKPT_NAME)
+    start_epoch = 0
     global_step = 0
+    best_loss   = float("inf")
+    history     = []
 
-    for epoch in range(n_epochs):
+    if os.path.exists(resume_path):
+        print(f"[DINO] Found resume checkpoint → loading {resume_path}")
+        start_epoch, global_step, best_loss, history = _load_resume_checkpoint(
+            resume_path, device,
+            student, teacher, student_head, teacher_head,
+            optimizer, criterion,
+        )
+        print(f"[DINO] Resuming from epoch {start_epoch + 1}  "
+              f"(global_step={global_step}, best_loss={best_loss:.4f})")
+    else:
+        print(f"[DINO] No resume checkpoint found — starting from scratch")
+
+    # Check if training is already complete
+    if start_epoch >= n_epochs:
+        print(f"[DINO] Training already complete ({start_epoch}/{n_epochs} epochs).")
+        return student
+
+    # Compute stop epoch for this run
+    stop_epoch = min(start_epoch + resume_interval, n_epochs)
+    print(f"[DINO] This run: epochs {start_epoch + 1} → {stop_epoch}  "
+          f"({stop_epoch - start_epoch} epochs)")
+
+    # ── Training loop ────────────────────────────────────────────────────────
+    for epoch in range(start_epoch, stop_epoch):
         student.train(); student_head.train()
         epoch_loss, n_batches = 0.0, 0
         pbar = tqdm(loader, desc=f"DINO epoch {epoch+1:3d}/{n_epochs}", leave=False)
@@ -155,7 +252,7 @@ def train(cfg: dict):
             )
             # Freeze last layer of head for the first N epochs (stabilises training)
             if epoch < freeze_last_layer:
-                student_head.last_layer.weight_g.grad = None
+                student_head.last_layer.parametrizations.weight.original0.grad = None
 
             optimizer.step()
 
@@ -176,13 +273,39 @@ def train(cfg: dict):
             best_loss = avg_loss
             torch.save(student.state_dict(), os.path.join(ckpt_dir, "dino_encoder_best.pt"))
 
-    # Save final student encoder
-    torch.save(student.state_dict(), os.path.join(ckpt_dir, "dino_encoder.pt"))
-    with open(os.path.join(ckpt_dir, "dino_training_log.json"), "w") as f:
-        json.dump({"history": history, "best_loss": best_loss, "config": cfg}, f, indent=2)
+    # ── Post-chunk: save or finalize ─────────────────────────────────────────
+    training_complete = (stop_epoch >= n_epochs)
 
-    print(f"\n[DINO] Pretraining complete. Best loss: {best_loss:.4f}")
-    print(f"[DINO] Encoder saved → {ckpt_dir}/dino_encoder.pt")
+    if training_complete:
+        # Save final student encoder
+        torch.save(student.state_dict(), os.path.join(ckpt_dir, "dino_encoder.pt"))
+        with open(os.path.join(ckpt_dir, "dino_training_log.json"), "w") as f:
+            json.dump({"history": history, "best_loss": best_loss, "config": cfg}, f, indent=2)
+
+        # Clean up all intermediate checkpoints
+        _cleanup_intermediate_checkpoints(ckpt_dir)
+
+        print(f"\n[DINO] ✓ Pretraining COMPLETE ({n_epochs}/{n_epochs} epochs). "
+              f"Best loss: {best_loss:.4f}")
+        print(f"[DINO] Final encoder saved → {ckpt_dir}/dino_encoder.pt")
+    else:
+        # Save resume checkpoint and stop
+        _save_resume_checkpoint(
+            resume_path, stop_epoch, global_step, best_loss, history,
+            student, teacher, student_head, teacher_head,
+            optimizer, criterion,
+        )
+        # Also save a partial training log
+        with open(os.path.join(ckpt_dir, "dino_training_log.json"), "w") as f:
+            json.dump({"history": history, "best_loss": best_loss,
+                        "epochs_completed": stop_epoch, "epochs_total": n_epochs,
+                        "config": cfg}, f, indent=2)
+
+        print(f"\n[DINO] ⏸ Paused at epoch {stop_epoch}/{n_epochs}. "
+              f"Best loss so far: {best_loss:.4f}")
+        print(f"[DINO] Resume checkpoint saved → {resume_path}")
+        print(f"[DINO] Run the same command again to continue training.")
+
     return student
 
 
@@ -193,6 +316,7 @@ DEFAULT_CFG = {
     "img_size":                   96,
     "patch_size":                 16,
     "epochs":                     100,
+    "resume_interval":            20,
     "batch_size":                 64,
     "base_lr":                    5e-4,
     "min_lr":                     1e-6,
@@ -227,3 +351,4 @@ if __name__ == "__main__":
             cfg.update(yaml.safe_load(f))
 
     train(cfg)
+

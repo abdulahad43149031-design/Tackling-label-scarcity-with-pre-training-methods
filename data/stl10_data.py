@@ -52,6 +52,45 @@ mae_pretrain_transform = transforms.Compose([
     transforms.Normalize(NORM_MEAN, NORM_STD),
 ])
 
+# ─────────────────────── dataset wrappers (module-level for pickling) ────────
+
+class _UnlabeledDataset(Dataset):
+    """Wraps STL-10 unlabeled split, returning images only (no labels)."""
+    def __init__(self, root, transform):
+        self.ds = datasets.STL10(root=root, split="unlabeled",
+                                 download=True, transform=transform)
+    def __getitem__(self, idx):
+        img, _ = self.ds[idx]
+        return img
+    def __len__(self):
+        return len(self.ds)
+
+
+class _DINODataset(Dataset):
+    """Wraps STL-10 unlabeled split with a multi-crop transform for DINO."""
+    def __init__(self, root, transform):
+        self.ds        = datasets.STL10(root=root, split="unlabeled",
+                                         download=True)
+        self.transform = transform
+    def __getitem__(self, idx):
+        img, _ = self.ds[idx]
+        return self.transform(img)     # list of crop tensors
+    def __len__(self):
+        return len(self.ds)
+
+
+class _NoLabelDataset(Dataset):
+    """Wraps STL-10 unlabeled split, returning (image, -1) pairs."""
+    def __init__(self, root, transform):
+        self.ds = datasets.STL10(root=root, split="unlabeled",
+                                 download=True, transform=transform)
+    def __getitem__(self, idx):
+        img, _ = self.ds[idx]
+        return img, -1
+    def __len__(self):
+        return len(self.ds)
+
+
 # ────────────────────────────── stratified split ─────────────────────────────
 
 def stratified_subset_indices(labels: np.ndarray, fraction: float, seed: int) -> list:
@@ -118,20 +157,16 @@ def get_unlabeled_loader(
 
     Returns: DataLoader (images only, no labels)
     """
-    class UnlabeledDataset(Dataset):
-        def __init__(self, root, transform):
-            self.ds        = datasets.STL10(root=root, split="unlabeled",
-                                            download=True, transform=transform)
-        def __getitem__(self, idx):
-            img, _ = self.ds[idx]
-            return img
-        def __len__(self):
-            return len(self.ds)
-
-    ds = UnlabeledDataset(root, mae_pretrain_transform)
+    ds = _UnlabeledDataset(root, mae_pretrain_transform)
     return DataLoader(ds, batch_size=batch_size, shuffle=True,
                       num_workers=num_workers, drop_last=True,
                       pin_memory=True, persistent_workers=num_workers > 0)
+
+
+def _dino_collate(batch):
+    """Collate multi-crop samples: stack per crop index across the batch."""
+    n_crops = len(batch[0])
+    return [torch.stack([sample[i] for sample in batch]) for i in range(n_crops)]
 
 
 def get_dino_unlabeled_loader(
@@ -148,26 +183,10 @@ def get_dino_unlabeled_loader(
         multicrop_transform: callable returning a list of crop tensors per image
     Returns: DataLoader yielding list[Tensor(B,C,H,W)] of length n_crops
     """
-    class DINODataset(Dataset):
-        def __init__(self, root, transform):
-            self.ds        = datasets.STL10(root=root, split="unlabeled",
-                                            download=True)
-            self.transform = transform
-        def __getitem__(self, idx):
-            img, _ = self.ds[idx]
-            return self.transform(img)     # list of crop tensors
-        def __len__(self):
-            return len(self.ds)
-
-    def dino_collate(batch):
-        # batch: list of crop-lists; each crop-list has n_crops tensors
-        n_crops = len(batch[0])
-        return [torch.stack([sample[i] for sample in batch]) for i in range(n_crops)]
-
-    ds = DINODataset(root, multicrop_transform)
+    ds = _DINODataset(root, multicrop_transform)
     return DataLoader(ds, batch_size=batch_size, shuffle=True,
                       num_workers=num_workers, drop_last=True,
-                      pin_memory=True, collate_fn=dino_collate,
+                      pin_memory=True, collate_fn=_dino_collate,
                       persistent_workers=num_workers > 0)
 
 
@@ -184,16 +203,7 @@ def get_all_images_loader(
     Returns: (DataLoader, labels_array) — labels_array is None for unlabeled split.
     """
     if split == "unlabeled":
-        class NoLabelDataset(Dataset):
-            def __init__(self, root, transform):
-                self.ds = datasets.STL10(root=root, split="unlabeled",
-                                         download=True, transform=transform)
-            def __getitem__(self, idx):
-                img, _ = self.ds[idx]
-                return img, -1
-            def __len__(self):
-                return len(self.ds)
-        ds = NoLabelDataset(root, eval_transform)
+        ds = _NoLabelDataset(root, eval_transform)
         loader = DataLoader(ds, batch_size=batch_size, shuffle=False,
                             num_workers=num_workers, pin_memory=True,
                             persistent_workers=num_workers > 0)

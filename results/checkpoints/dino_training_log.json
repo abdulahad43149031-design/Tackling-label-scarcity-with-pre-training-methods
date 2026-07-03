@@ -1,0 +1,42 @@
+{
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 7.854220265157702
+    },
+    {
+      "epoch": 2,
+      "loss": 7.302032066215779
+    }
+  ],
+  "best_loss": 7.302032066215779,
+  "epochs_completed": 2,
+  "epochs_total": 100,
+  "config": {
+    "variant": "ViT-Small/16",
+    "img_size": 96,
+    "patch_size": 16,
+    "epochs": 100,
+    "resume_interval": 1,
+    "batch_size": 64,
+    "base_lr": 0.0005,
+    "min_lr": 1e-06,
+    "weight_decay": 0.04,
+    "weight_decay_end": 0.4,
+    "teacher_momentum_start": 0.996,
+    "out_dim": 4096,
+    "hidden_dim": 2048,
+    "bottleneck_dim": 256,
+    "n_local_crops": 6,
+    "student_temp": 0.1,
+    "warmup_teacher_temp": 0.04,
+    "teacher_temp": 0.07,
+    "warmup_teacher_temp_epochs": 30,
+    "freeze_last_layer_epochs": 1,
+    "clip_grad": 3.0,
+    "num_workers": 4,
+    "data_root": "./data",
+    "ckpt_dir": "results/checkpoints",
+    "seed": 42
+  }
+}

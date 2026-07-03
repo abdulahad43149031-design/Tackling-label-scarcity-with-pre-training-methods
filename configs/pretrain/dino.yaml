@@ -5,6 +5,7 @@ variant:                    "ViT-Small/16"
 img_size:                   96
 patch_size:                 16
 epochs:                     100
+resume_interval:            18        # train this many epochs per run, then pause
 batch_size:                 64
 base_lr:                    5.0e-4
 min_lr:                     1.0e-6

@@ -110,12 +110,12 @@ class DINOHead(nn.Module):
         layers += [nn.Linear(d, bottleneck_dim)]
         self.mlp = nn.Sequential(*layers)
 
-        self.last_layer = nn.utils.weight_norm(
+        self.last_layer = nn.utils.parametrizations.weight_norm(
             nn.Linear(bottleneck_dim, out_dim, bias=False)
         )
-        self.last_layer.weight_g.data.fill_(1)
+        self.last_layer.parametrizations.weight.original0.data.fill_(1)
         if norm_last_layer:
-            self.last_layer.weight_g.requires_grad = False
+            self.last_layer.parametrizations.weight.original0.requires_grad = False
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.mlp(x)
@@ -195,6 +195,19 @@ def _odd_ks(size: int, div: int = 10) -> int:
     return ks if ks % 2 == 1 else ks + 1
 
 
+class MultiCropTransform:
+    """Callable that produces 2 global + n local crops from a single image."""
+    def __init__(self, g_t, l_t, n_loc):
+        self.g_t   = g_t
+        self.l_t   = l_t
+        self.n_loc = n_loc
+    def __call__(self, img):
+        return (
+            [self.g_t(img), self.g_t(img)]
+            + [self.l_t(img) for _ in range(self.n_loc)]
+        )
+
+
 def get_multicrop_transform(img_size: int = 96, n_local_crops: int = 6):
     """
     DINO multi-crop augmentation.
@@ -241,17 +254,6 @@ def get_multicrop_transform(img_size: int = 96, n_local_crops: int = 6):
         transforms.ToTensor(),
         normalize,
     ])
-
-    class MultiCropTransform:
-        def __init__(self, g_t, l_t, n_loc):
-            self.g_t   = g_t
-            self.l_t   = l_t
-            self.n_loc = n_loc
-        def __call__(self, img):
-            return (
-                [self.g_t(img), self.g_t(img)]
-                + [self.l_t(img) for _ in range(self.n_loc)]
-            )
 
     return MultiCropTransform(global_transform, local_transform, n_local_crops)
 
