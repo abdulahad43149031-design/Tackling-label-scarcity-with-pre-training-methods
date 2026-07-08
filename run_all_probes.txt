@@ -1,0 +1,117 @@
+# ============================================================
+#  All Linear Probe Commands (7 configs × 4 fracs × 3 seeds = 84 runs)
+#  Copy-paste into PowerShell to run individually or as a batch.
+# ============================================================
+
+
+# ────────────────────────────────────────────────────────────
+#  STANDALONE (3 configs: MAE, DINO, Diffusion)
+# ────────────────────────────────────────────────────────────
+
+# --- MAE Standalone ---
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.01 --seed 0
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.01 --seed 1
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.01 --seed 2
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.05 --seed 0
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.05 --seed 1
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.05 --seed 2
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.10 --seed 0
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.10 --seed 1
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 0.10 --seed 2
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 1.0 --seed 0
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 1.0 --seed 1
+uv run python train_downstream.py --config configs/standalone/mae_probe.yaml --label_fraction 1.0 --seed 2
+
+# --- DINO Standalone ---
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.01 --seed 0
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.01 --seed 1
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.01 --seed 2
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.05 --seed 0
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.05 --seed 1
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.05 --seed 2
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.10 --seed 0
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.10 --seed 1
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 0.10 --seed 2
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 1.0 --seed 0
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 1.0 --seed 1
+uv run python train_downstream.py --config configs/standalone/dino_probe.yaml --label_fraction 1.0 --seed 2
+
+# --- Diffusion Standalone ---
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.01 --seed 0
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.01 --seed 1
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.01 --seed 2
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.05 --seed 0
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.05 --seed 1
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.05 --seed 2
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.10 --seed 0
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.10 --seed 1
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 0.10 --seed 2
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 1.0 --seed 0
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 1.0 --seed 1
+uv run python train_downstream.py --config configs/standalone/diffusion_probe.yaml --label_fraction 1.0 --seed 2
+
+
+# ────────────────────────────────────────────────────────────
+#  PAIRWISE FUSION (3 configs: MAE+DINO, MAE+Diffusion, DINO+Diffusion)
+# ────────────────────────────────────────────────────────────
+
+# --- MAE + DINO ---
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.01 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.01 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.01 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.05 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.05 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.05 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.10 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.10 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 0.10 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 1.0 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 1.0 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino.yaml --label_fraction 1.0 --seed 2
+
+# --- MAE + Diffusion ---
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.01 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.01 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.01 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.05 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.05 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.05 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.10 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.10 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 0.10 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 1.0 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 1.0 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_diffusion.yaml --label_fraction 1.0 --seed 2
+
+# --- DINO + Diffusion ---
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.01 --seed 0
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.01 --seed 1
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.01 --seed 2
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.05 --seed 0
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.05 --seed 1
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.05 --seed 2
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.10 --seed 0
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.10 --seed 1
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 0.10 --seed 2
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 1.0 --seed 0
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 1.0 --seed 1
+uv run python train_downstream.py --config configs/fusion/dino_diffusion.yaml --label_fraction 1.0 --seed 2
+
+
+# ────────────────────────────────────────────────────────────
+#  TRIO FUSION (1 config: MAE + DINO + Diffusion)
+# ────────────────────────────────────────────────────────────
+
+# --- MAE + DINO + Diffusion ---
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.01 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.01 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.01 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.05 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.05 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.05 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.10 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.10 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 0.10 --seed 2
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 1.0 --seed 0
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 1.0 --seed 1
+uv run python train_downstream.py --config configs/fusion/mae_dino_diffusion.yaml --label_fraction 1.0 --seed 2

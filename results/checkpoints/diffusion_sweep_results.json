@@ -1,0 +1,32 @@
+[
+  {
+    "timestep": 100,
+    "hook_layer": "mid_block",
+    "accuracy": 0.448375
+  },
+  {
+    "timestep": 100,
+    "hook_layer": "down_blocks.2",
+    "accuracy": 0.3715
+  },
+  {
+    "timestep": 250,
+    "hook_layer": "mid_block",
+    "accuracy": 0.353375
+  },
+  {
+    "timestep": 250,
+    "hook_layer": "down_blocks.2",
+    "accuracy": 0.34825
+  },
+  {
+    "timestep": 500,
+    "hook_layer": "mid_block",
+    "accuracy": 0.240625
+  },
+  {
+    "timestep": 500,
+    "hook_layer": "down_blocks.2",
+    "accuracy": 0.224875
+  }
+]

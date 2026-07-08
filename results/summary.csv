@@ -1,0 +1,97 @@
+config,display_name,label_fraction,seed,smoothed_acc
+baseline,baseline,0.01,0,0.19208750000000002
+baseline,baseline,0.01,1,0.208075
+baseline,baseline,0.01,2,0.21491249999999998
+baseline,baseline,0.05,0,0.273325
+baseline,baseline,0.05,1,0.26317500000000005
+baseline,baseline,0.05,2,0.266275
+baseline,baseline,0.1,0,0.3016875
+baseline,baseline,0.1,1,0.3087125
+baseline,baseline,0.1,2,0.29738749999999997
+baseline,baseline,1.0,0,0.2718625
+baseline,baseline,1.0,1,0.2697625
+baseline,baseline,1.0,2,0.28526250000000003
+fusion/dino_diffusion,DINO + Diffusion,0.01,0,0.143125
+fusion/dino_diffusion,DINO + Diffusion,0.01,1,0.1346375
+fusion/dino_diffusion,DINO + Diffusion,0.01,2,0.18002500000000002
+fusion/dino_diffusion,DINO + Diffusion,0.05,0,0.268275
+fusion/dino_diffusion,DINO + Diffusion,0.05,1,0.3116875
+fusion/dino_diffusion,DINO + Diffusion,0.05,2,0.2702
+fusion/dino_diffusion,DINO + Diffusion,0.1,0,0.2886
+fusion/dino_diffusion,DINO + Diffusion,0.1,1,0.29215
+fusion/dino_diffusion,DINO + Diffusion,0.1,2,0.29399999999999993
+fusion/dino_diffusion,DINO + Diffusion,1.0,0,0.6814749999999999
+fusion/dino_diffusion,DINO + Diffusion,1.0,1,0.6716
+fusion/dino_diffusion,DINO + Diffusion,1.0,2,0.67465
+fusion/mae_diffusion,MAE + Diffusion,0.01,0,0.20125
+fusion/mae_diffusion,MAE + Diffusion,0.01,1,0.1452625
+fusion/mae_diffusion,MAE + Diffusion,0.01,2,0.2110125
+fusion/mae_diffusion,MAE + Diffusion,0.05,0,0.3404
+fusion/mae_diffusion,MAE + Diffusion,0.05,1,0.32021249999999996
+fusion/mae_diffusion,MAE + Diffusion,0.05,2,0.3189
+fusion/mae_diffusion,MAE + Diffusion,0.1,0,0.33792500000000003
+fusion/mae_diffusion,MAE + Diffusion,0.1,1,0.32093750000000004
+fusion/mae_diffusion,MAE + Diffusion,0.1,2,0.37429999999999997
+fusion/mae_diffusion,MAE + Diffusion,1.0,0,0.5732250000000001
+fusion/mae_diffusion,MAE + Diffusion,1.0,1,0.5655625
+fusion/mae_diffusion,MAE + Diffusion,1.0,2,0.562075
+fusion/mae_dino,MAE + DINO,0.01,0,0.37475
+fusion/mae_dino,MAE + DINO,0.01,1,0.38677500000000004
+fusion/mae_dino,MAE + DINO,0.01,2,0.42410000000000003
+fusion/mae_dino,MAE + DINO,0.05,0,0.46537500000000004
+fusion/mae_dino,MAE + DINO,0.05,1,0.46706250000000005
+fusion/mae_dino,MAE + DINO,0.05,2,0.4528125
+fusion/mae_dino,MAE + DINO,0.1,0,0.4386
+fusion/mae_dino,MAE + DINO,0.1,1,0.4582125
+fusion/mae_dino,MAE + DINO,0.1,2,0.460625
+fusion/mae_dino,MAE + DINO,1.0,0,0.6414375000000001
+fusion/mae_dino,MAE + DINO,1.0,1,0.6368500000000001
+fusion/mae_dino,MAE + DINO,1.0,2,0.6297625
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.01,0,0.18286249999999998
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.01,1,0.157
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.01,2,0.202625
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.05,0,0.32525
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.05,1,0.340325
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.05,2,0.33428749999999996
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.1,0,0.3407875
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.1,1,0.34450000000000003
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,0.1,2,0.36375
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,1.0,0,0.5643875
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,1.0,1,0.5563374999999999
+fusion/mae_dino_diffusion,MAE + DINO + Diffusion ★,1.0,2,0.5599625000000001
+standalone/diffusion_probe,Diffusion,0.01,0,0.20885000000000004
+standalone/diffusion_probe,Diffusion,0.01,1,0.17358749999999998
+standalone/diffusion_probe,Diffusion,0.01,2,0.19645
+standalone/diffusion_probe,Diffusion,0.05,0,0.3417875
+standalone/diffusion_probe,Diffusion,0.05,1,0.33565000000000006
+standalone/diffusion_probe,Diffusion,0.05,2,0.32353750000000003
+standalone/diffusion_probe,Diffusion,0.1,0,0.3890875
+standalone/diffusion_probe,Diffusion,0.1,1,0.39705
+standalone/diffusion_probe,Diffusion,0.1,2,0.39427500000000004
+standalone/diffusion_probe,Diffusion,1.0,0,0.518125
+standalone/diffusion_probe,Diffusion,1.0,1,0.51155
+standalone/diffusion_probe,Diffusion,1.0,2,0.5103000000000001
+standalone/dino_probe,DINO,0.01,0,0.4210375
+standalone/dino_probe,DINO,0.01,1,0.444975
+standalone/dino_probe,DINO,0.01,2,0.471725
+standalone/dino_probe,DINO,0.05,0,0.6248250000000001
+standalone/dino_probe,DINO,0.05,1,0.6209625
+standalone/dino_probe,DINO,0.05,2,0.6117875
+standalone/dino_probe,DINO,0.1,0,0.5940749999999999
+standalone/dino_probe,DINO,0.1,1,0.627225
+standalone/dino_probe,DINO,0.1,2,0.600825
+standalone/dino_probe,DINO,1.0,0,0.7363375
+standalone/dino_probe,DINO,1.0,1,0.73485
+standalone/dino_probe,DINO,1.0,2,0.7382500000000001
+standalone/mae_probe,MAE,0.01,0,0.3579375
+standalone/mae_probe,MAE,0.01,1,0.375725
+standalone/mae_probe,MAE,0.01,2,0.398625
+standalone/mae_probe,MAE,0.05,0,0.4558625
+standalone/mae_probe,MAE,0.05,1,0.4744625
+standalone/mae_probe,MAE,0.05,2,0.477375
+standalone/mae_probe,MAE,0.1,0,0.4539625
+standalone/mae_probe,MAE,0.1,1,0.459875
+standalone/mae_probe,MAE,0.1,2,0.4949375
+standalone/mae_probe,MAE,1.0,0,0.6428750000000001
+standalone/mae_probe,MAE,1.0,1,0.6433625000000001
+standalone/mae_probe,MAE,1.0,2,0.6363749999999999

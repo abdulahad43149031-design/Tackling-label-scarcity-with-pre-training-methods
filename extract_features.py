@@ -61,7 +61,7 @@ def quick_probe_accuracy(
     y_tr   = train_labels.numpy()
     y_te   = test_labels.numpy()
 
-    clf = LogisticRegression(max_iter=500, C=1.0, solver="lbfgs", multi_class="multinomial")
+    clf = LogisticRegression(max_iter=500, C=1.0, solver="lbfgs")
     clf.fit(X_tr, y_tr)
     return float((clf.predict(X_te) == y_te).mean())
 
@@ -150,7 +150,7 @@ def extract_and_cache(cfg: dict, best_cfg: dict, device: str):
         loader, labels_arr = get_all_images_loader(
             root=data_root, split=split,
             label_fraction=frac, seed=seed,
-            batch_size=256, num_workers=4,
+            batch_size=256, num_workers=0,
         )
         embs, labels = extract_embeddings(enc, loader, device)
         torch.save({"embeddings": embs, "labels": labels},
@@ -200,12 +200,13 @@ if __name__ == "__main__":
     else:
         best_cfg, sweep_results = run_sweep(cfg, device)
 
-    # Save best config
+    # Save best config and sweep results (only overwrite sweep results if we actually ran one)
     best_cfg_path = os.path.join(ckpt_dir, "diffusion_best_config.yaml")
     with open(best_cfg_path, "w") as f:
         yaml.dump({**cfg, **best_cfg}, f)
-    with open(os.path.join(ckpt_dir, "diffusion_sweep_results.json"), "w") as f:
-        json.dump(sweep_results, f, indent=2)
+    if not args.skip_sweep:
+        with open(os.path.join(ckpt_dir, "diffusion_sweep_results.json"), "w") as f:
+            json.dump(sweep_results, f, indent=2)
 
     # Extract and cache embeddings
     extract_and_cache(cfg, best_cfg, device)

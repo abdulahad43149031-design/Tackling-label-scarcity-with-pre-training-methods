@@ -1,0 +1,15 @@
+accuracy: null
+ckpt_dir: results/checkpoints
+data_root: ./data
+embedding_cache_dir: results/checkpoints/diffusion_embeddings
+hook_layer: mid_block
+hook_layers_to_sweep:
+- mid_block
+- down_blocks.2
+model_id: google/ddpm-cifar10-32
+model_img_size: 32
+timestep: 250
+timesteps_to_sweep:
+- 100
+- 250
+- 500
