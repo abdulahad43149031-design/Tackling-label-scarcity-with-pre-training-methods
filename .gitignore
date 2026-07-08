@@ -24,8 +24,8 @@ data/stl10_binary.tar.gz
 *.safetensors
 *.bin
 
-# Runs (tensorboard logs, wandb, etc.) — plots are kept
-results/runs/
+# Runs — keep metrics & configs, ignore heavy checkpoints
+results/runs/**/checkpoint.pt
 
 # Legacy datasets folder
 /datasets/

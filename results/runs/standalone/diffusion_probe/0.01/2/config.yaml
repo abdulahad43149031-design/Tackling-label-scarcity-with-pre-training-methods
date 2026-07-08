@@ -1,0 +1,12 @@
+base_lr: 0.001
+batch_size: 64
+diffusion_model: google/ddpm-cifar10-32
+encoder: diffusion
+encoder_ckpt: null
+epochs: 30
+hook_layer: mid_block
+label_fraction: 0.01
+seed: 2
+smoothing_window: 10
+timestep: 250
+weight_decay: 0.0

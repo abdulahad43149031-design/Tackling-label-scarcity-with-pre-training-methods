@@ -1,0 +1,16 @@
+base_lr: 0.001
+batch_size: 64
+encoders:
+- ckpt: results/checkpoints/mae_encoder.pt
+  name: mae
+  variant: ViT-Small/16
+- ckpt: results/checkpoints/dino_encoder.pt
+  name: dino
+  variant: ViT-Small/16
+epochs: 30
+fused_dim: 256
+fusion_mode: concat_proj
+label_fraction: 0.1
+seed: 2
+smoothing_window: 10
+weight_decay: 0.0

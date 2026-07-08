@@ -1,0 +1,10 @@
+base_lr: 0.001
+batch_size: 64
+encoder: dino
+encoder_ckpt: results/checkpoints/dino_encoder.pt
+epochs: 30
+label_fraction: 0.1
+seed: 2
+smoothing_window: 10
+variant: ViT-Small/16
+weight_decay: 0.0

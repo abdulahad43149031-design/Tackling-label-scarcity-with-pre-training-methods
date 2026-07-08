@@ -1,0 +1,10 @@
+base_lr: 0.0001
+batch_size: 64
+dropout: 0.1
+epochs: 50
+label_fraction: 0.05
+seed: 1
+smoothing_window: 10
+variant: ViT-Small/16
+warmup_fraction: 0.1
+weight_decay: 0.1
